@@ -3,6 +3,7 @@ import { ArrowUpRight, CornerDownRight, Route } from 'lucide-react'
 import { Link } from 'react-router'
 import type { Track } from '../data'
 import { useLang } from '../i18n'
+import { enterOnView } from '../lib/motion'
 
 export function Mark() {
   return (
@@ -20,6 +21,17 @@ export function Trace({ track }: { track: Track }) {
         strokeWidth="2.7"
         strokeLinecap="round"
         strokeLinejoin="round"
+      />
+      <path
+        className="trace-lap"
+        d={track.outline}
+        pathLength={100}
+        stroke="var(--accent)"
+        strokeWidth="2.7"
+        strokeDasharray="12 88"
+        strokeLinecap="round"
+        strokeLinejoin="round"
+        opacity="0"
       />
       <circle cx="17" cy="43" r="3.4" fill="var(--accent)" stroke="#18191b" strokeWidth="1.2" />
     </svg>
@@ -61,7 +73,7 @@ export function TrackCard({
 }) {
   const { t, lang } = useLang()
   return (
-    <article className="track-card">
+    <article className="track-card" ref={enterOnView}>
       <div className="track-picture">
         <img src={track.img} alt={track.name[lang]} loading="lazy" />
         <span className="track-plate">

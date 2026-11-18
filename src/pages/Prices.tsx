@@ -2,6 +2,7 @@ import { ArrowRight, Timer } from 'lucide-react'
 import { Link } from 'react-router'
 import { PLANS, money } from '../data'
 import { useLang } from '../i18n'
+import { enterOnView } from '../lib/motion'
 import { PageHead } from '../components/Design'
 
 export default function Prices() {
@@ -13,7 +14,7 @@ export default function Prices() {
       </PageHead>
       <div className="plan-list">
         {PLANS.map((p, i) => (
-          <article className="plan-row" key={p.id}>
+          <article className="plan-row" key={p.id} ref={enterOnView}>
             <span className="plan-number mono">/ 0{i + 1}</span>
             <div>
               <h2>{p.name[lang]}</h2>

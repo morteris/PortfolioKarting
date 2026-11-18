@@ -14,6 +14,7 @@ import { Link } from 'react-router'
 import { IMAGES, REPOSITORY, TRACKS } from '../data'
 import { Eyebrow, Trace, TrackCard } from '../components/Design'
 import { useLang } from '../i18n'
+import { enterOnView } from '../lib/motion'
 
 export default function Home() {
   const { t, lang } = useLang()
@@ -125,7 +126,7 @@ export default function Home() {
                 { title: 'step3', body: 'step3Text', Icon: GitBranch },
               ] as const
             ).map(({ title, body, Icon }, i) => (
-              <div key={title} className="step">
+              <div key={title} className="step" ref={enterOnView}>
                 <div className="step-index">
                   <span>0{i + 1}</span>
                   <Icon size={18} />

@@ -1,0 +1,189 @@
+/* Motion is an enhancement, never a loading gate. No layout animation, fixed
+   compositing layers, scroll listeners or loops. Resting styles live elsewhere. */
+@media screen and (prefers-reduced-motion: no-preference) {
+  :root {
+    --kr-brake: cubic-bezier(0.18, 0.8, 0.24, 1);
+  }
+
+  /* Grid start: photo settles, title moves into line, controls remain clickable. */
+  .hero-title {
+    animation: kr-grid-start 470ms var(--kr-brake) backwards;
+  }
+  .hero-lead,
+  .hero-description {
+    animation: kr-rise 370ms var(--kr-brake) 35ms backwards;
+  }
+  .hero-description {
+    animation-delay: 75ms;
+  }
+  .hero-actions {
+    animation: kr-ink-in 260ms ease-out 90ms backwards;
+  }
+
+  /* A card enters once when it reaches the viewport, not on every scroll. */
+  .plan-row[data-entered],
+  .track-card[data-entered],
+  .step[data-entered] {
+    animation: kr-rise 370ms var(--kr-brake) var(--kr-entry-delay, 0ms) backwards;
+  }
+  .page-heading h1,
+  .profile-heading h1,
+  .login-box h1 {
+    animation: kr-rise 270ms var(--kr-brake) backwards;
+  }
+  .mobile-nav:not([hidden]) {
+    animation: kr-menu-open 160ms var(--kr-brake);
+  }
+
+  /* One lap of the actual selected circuit, with its normal white outline intact. */
+  .circuit-tag .trace-lap,
+  .quote-photo .trace-lap,
+  .track-card:focus-within .trace-lap {
+    animation: kr-lap 720ms ease-in-out;
+  }
+
+  /* Final values are rendered immediately; only the ink moves, never a counter. */
+  .quote-total strong {
+    animation: kr-value-in 230ms var(--kr-brake);
+  }
+  .slot[aria-pressed='true'] svg {
+    animation: kr-tick 190ms var(--kr-brake);
+  }
+  .status > svg {
+    animation: kr-tick 220ms var(--kr-brake);
+  }
+  .status,
+  .slot {
+    transition:
+      color 150ms ease,
+      border-color 150ms ease,
+      background-color 150ms ease;
+  }
+  .btn:not(:disabled):active,
+  .account-btn:active {
+    translate: 0 1px;
+  }
+}
+
+@media screen and (min-width: 601px) and (prefers-reduced-motion: no-preference) {
+  .hero-photograph img {
+    animation: kr-cover-settle 820ms var(--kr-brake) backwards;
+  }
+  :is(.track-grid, .steps) > :nth-child(2) {
+    --kr-entry-delay: 45ms;
+  }
+  :is(.track-grid, .steps) > :nth-child(3) {
+    --kr-entry-delay: 90ms;
+  }
+}
+
+@media screen and (hover: hover) and (pointer: fine) and (prefers-reduced-motion: no-preference) {
+  .track-picture > img {
+    transition: transform 280ms var(--kr-brake);
+  }
+  .track-card:is(:hover, :focus-within) .track-picture > img {
+    transform: scale(1.028);
+  }
+  .track-card:hover .trace-lap {
+    animation: kr-lap 720ms ease-in-out;
+  }
+  :is(.card-action, .text-link, .btn) > :is(.lucide-arrow-right, .lucide-arrow-up-right) {
+    transition: transform 170ms var(--kr-brake);
+  }
+  :is(.text-link, .btn):is(:hover, :focus-visible) > .lucide-arrow-right {
+    transform: translateX(3px);
+  }
+  .track-card:is(:hover, :focus-within) .card-action > svg,
+  .btn:is(:hover, :focus-visible) > .lucide-arrow-up-right {
+    transform: translate(2px, -2px);
+  }
+}
+@media screen and (hover: none) and (prefers-reduced-motion: no-preference) {
+  .track-card[data-entered] .trace-lap {
+    animation: kr-lap 720ms ease-in-out;
+  }
+}
+
+@keyframes kr-cover-settle {
+  from {
+    transform: scale(1.027);
+  }
+  to {
+    transform: none;
+  }
+}
+@keyframes kr-grid-start {
+  from {
+    opacity: 0.76;
+    transform: translateX(-13px);
+  }
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+@keyframes kr-rise {
+  from {
+    opacity: 0.78;
+    transform: translateY(8px);
+  }
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+@keyframes kr-menu-open {
+  from {
+    opacity: 0.85;
+    transform: translateY(-5px);
+  }
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+@keyframes kr-ink-in {
+  from {
+    opacity: 0.82;
+  }
+  to {
+    opacity: 1;
+  }
+}
+@keyframes kr-lap {
+  0% {
+    stroke-dashoffset: 12;
+    opacity: 0;
+  }
+  12%,
+  84% {
+    opacity: 1;
+  }
+  100% {
+    stroke-dashoffset: -88;
+    opacity: 0;
+  }
+}
+@keyframes kr-value-in {
+  from {
+    opacity: 0.82;
+    transform: translateY(3px);
+  }
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+@keyframes kr-tick {
+  from {
+    opacity: 0.8;
+    transform: scale(0.72);
+  }
+  70% {
+    transform: scale(1.09);
+  }
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}

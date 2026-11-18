@@ -49,6 +49,7 @@ export default function BookingPage() {
   }, [])
   const track = trackById(draft.track),
     plan = planById(draft.plan)
+  const amount = priceOf(draft)
   const slots = SLOTS.map((slot) => ({
     slot,
     off: checkDraft({ ...draft, slot }, bookings, now) !== null,
@@ -204,7 +205,7 @@ export default function BookingPage() {
             <span className="visual-tag mono">
               <Ticket size={15} /> SESSION / PASS
             </span>
-            <Trace track={track} />
+            <Trace key={track.id} track={track} />
           </div>
           <div className="quote-body">
             <span className="label">
@@ -225,9 +226,9 @@ export default function BookingPage() {
                 </div>
               ))}
             </dl>
-            <div className="quote-total">
+            <div className="quote-total" aria-live="polite" aria-atomic="true">
               <span>{t('estimate')}</span>
-              <strong>{money(priceOf(draft), lang)}</strong>
+              <strong key={amount}>{money(amount, lang)}</strong>
             </div>
             <p className="helper">
               <CircleHelp size={14} />

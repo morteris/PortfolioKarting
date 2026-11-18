@@ -1,6 +1,7 @@
 import { ArrowUpRight, Github } from 'lucide-react'
 import { REPOSITORY } from '../data'
 import { useLang } from '../i18n'
+import { enterOnView } from '../lib/motion'
 import { Eyebrow, PageHead } from '../components/Design'
 
 export default function About() {
@@ -28,7 +29,7 @@ export default function About() {
       <h2 className="section-title about-sub">{t('built')}</h2>
       <div className="steps">
         {(['1', '2', '3'] as const).map((n) => (
-          <article className="step" key={n}>
+          <article className="step" key={n} ref={enterOnView}>
             <div className="step-index">/ 0{n}</div>
             <h3>{t(`brief${n}`)}</h3>
             <p>{t(`brief${n}Text`)}</p>
