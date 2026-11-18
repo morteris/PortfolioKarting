@@ -1,0 +1,624 @@
+/* Tablet and phone. All primary actions remain visible without hover. */
+@media (min-width: 1750px) {
+  .hero-photograph {
+    left: 29%;
+  }
+  .hero-shade {
+    background:
+      linear-gradient(90deg, #0c0c0e 18%, #0c0c0ef2 31%, #0c0c0e38 58%, transparent 70%),
+      linear-gradient(0deg, #08080ac9, transparent 25%);
+  }
+}
+@media (max-width: 1040px) {
+  .nav-row {
+    gap: 14px;
+  }
+  .desktop-nav {
+    gap: 19px;
+  }
+  .nav-actions {
+    gap: 12px;
+  }
+  .project-fact {
+    padding-left: 18px;
+    gap: 9px;
+  }
+  .track-info {
+    padding: 16px;
+  }
+  .card-code {
+    display: none;
+  }
+  .plan-row {
+    grid-template-columns: auto 1fr 1fr;
+    gap: 12px 22px;
+  }
+  .plan-row p {
+    grid-column: 2;
+  }
+  .plan-rate {
+    grid-column: 3;
+    grid-row: 1;
+    text-align: right;
+  }
+  .plan-row .btn {
+    grid-column: 3;
+    grid-row: 2;
+    justify-self: end;
+  }
+  .plan-row > p {
+    grid-column: 2;
+    grid-row: 2;
+  }
+  .profile-heading {
+    align-items: flex-start;
+  }
+  .profile-tools {
+    justify-content: flex-end;
+  }
+}
+@media (max-width: 780px) {
+  :root {
+    --edge: 22px;
+  }
+  .desktop-nav {
+    display: none;
+  }
+  .menu-btn {
+    display: inline-flex;
+    width: 36px;
+    height: 40px;
+  }
+  .menu-btn svg {
+    width: 21px;
+  }
+  .nav-row {
+    height: 60px;
+  }
+  .mobile-nav:not([hidden]) {
+    display: flex;
+    position: absolute;
+    top: 100%;
+    inset-inline: 0;
+    background: #17171a;
+    border-bottom: 1px solid #444348;
+    padding: 8px var(--edge) 15px;
+    box-shadow: 0 12px 22px #0003;
+    flex-direction: column;
+  }
+  .mobile-nav a {
+    padding: 10px 3px;
+    font-weight: 700;
+    font-size: 15px;
+    color: var(--muted);
+  }
+  .mobile-nav a.active {
+    color: var(--accent);
+  }
+  .hero-inner {
+    min-height: 400px;
+    padding-block: 40px;
+  }
+  .hero-title {
+    font-size: clamp(66px, 11vw, 94px);
+  }
+  .hero-description {
+    max-width: 370px;
+    font-size: 14px;
+  }
+  .hero-lead {
+    font-size: 21px;
+  }
+  .hero-shade {
+    background:
+      linear-gradient(90deg, #0c0c0ef5 2%, #0c0c0eec 27%, #0c0c0ea3 50%, #0c0c0e0a 85%),
+      linear-gradient(0deg, #08080ae0, transparent 38%);
+  }
+  .cam-mark {
+    font-size: 8px;
+    top: 19px;
+  }
+  .circuit-tag {
+    bottom: 16px;
+    font-size: 10px;
+  }
+  .project-facts {
+    grid-template-columns: 1.4fr 1fr 1fr;
+  }
+  .demo-fact {
+    display: none;
+  }
+  .project-fact > svg {
+    width: 17px;
+  }
+  .track-grid {
+    gap: 12px;
+  }
+  .track-info {
+    padding: 12px;
+  }
+  .track-specs {
+    gap: 5px 8px;
+    font-size: 10px;
+  }
+  .track-picture {
+    aspect-ratio: 1.55;
+  }
+  .track-plate {
+    left: 9px;
+    top: 9px;
+  }
+  .track-picture .trace {
+    width: 60px;
+  }
+  .card-title h3 {
+    font-size: 21px;
+  }
+  .steps {
+    gap: 15px;
+  }
+  .step h3 {
+    font-size: 19px;
+  }
+  .footer-grid {
+    grid-template-columns: 1fr 1fr;
+    gap: 22px;
+  }
+  .footer-intro {
+    grid-column: 1/-1;
+  }
+  .footer-intro p {
+    max-width: 65ch;
+  }
+  .credential-card {
+    padding-left: 15px;
+  }
+  .profile-heading {
+    flex-direction: column;
+  }
+  .profile-tools {
+    justify-content: flex-start;
+  }
+  .booking-layout {
+    grid-template-columns: 1.35fr 1fr;
+    gap: 13px;
+  }
+  .booking-form,
+  .quote-body {
+    padding: 20px;
+  }
+  .form-grid {
+    grid-template-columns: 1fr;
+  }
+  .login-layout {
+    grid-template-columns: 1.1fr 0.8fr;
+  }
+  .login-caption {
+    padding: 21px;
+  }
+  .inner-page {
+    padding-block: 33px 52px;
+  }
+}
+@media (max-width: 600px) {
+  :root {
+    --edge: 18px;
+  }
+  .wordmark {
+    font-size: 18px;
+    gap: 6px;
+  }
+  .brand-mark {
+    width: 30px;
+    height: 24px;
+  }
+  .nav-actions {
+    gap: 9px;
+  }
+  .account-btn {
+    padding: 6px 10px;
+    min-height: 35px;
+    font-size: 12px;
+  }
+  .language-btn {
+    gap: 4px;
+    font-size: 10px;
+  }
+  .language-btn svg {
+    width: 13px;
+  }
+  .menu-btn {
+    width: 28px;
+  }
+  .hero-inner {
+    min-height: 0;
+    align-items: flex-end;
+    padding-block: clamp(146px, 43vw, 250px) 26px;
+  }
+  .hero-photograph {
+    inset: 0 0 auto;
+    height: clamp(235px, 68vw, 340px);
+  }
+  .hero-photograph img {
+    object-position: 52% 44%;
+    filter: brightness(1.12);
+  }
+  .hero-shade {
+    background: linear-gradient(
+      0deg,
+      #0c0c0e 0%,
+      #0c0c0e 44%,
+      #0c0c0ef5 51%,
+      #0c0c0e60 70%,
+      transparent 89%
+    );
+  }
+  .hero-kicker {
+    gap: 8px;
+    font-size: 8.5px;
+    letter-spacing: 0.08em;
+  }
+  .index-tag {
+    padding: 3px 7px;
+  }
+  .kicker-divider {
+    width: 12px;
+  }
+  .hero-title {
+    font-size: clamp(50px, 13.5vw, 80px);
+    margin: 13px 0 12px -1px;
+  }
+  .hero-lead {
+    font-size: clamp(18px, 4.6vw, 23px);
+  }
+  .hero-description {
+    font-size: 13px;
+    line-height: 1.6;
+    margin-top: 8px;
+    max-width: 52ch;
+  }
+  .hero-actions {
+    margin-top: 19px;
+    gap: 8px;
+  }
+  .hero-actions .btn {
+    min-height: 41px;
+    font-size: 12px;
+    padding-inline: 13px;
+    gap: 7px;
+  }
+  .cam-mark {
+    top: 12px;
+    right: var(--edge);
+  }
+  .circuit-tag {
+    display: none;
+  }
+  .hero-rule {
+    height: 2px;
+  }
+  .project-facts {
+    grid-template-columns: 1.25fr 1fr;
+    gap: 16px 0;
+    padding-block: 17px;
+  }
+  .project-fact {
+    padding-left: 13px;
+    min-height: 27px;
+  }
+  .project-fact:nth-child(3) {
+    padding-left: 0;
+    border: 0;
+  }
+  .project-fact > svg {
+    width: 15px;
+  }
+  .project-fact strong {
+    font-size: 11px;
+    margin-top: 3px;
+  }
+  .project-fact strong i {
+    padding-inline: 0;
+  }
+  .project-fact div > span {
+    font-size: 8px;
+    letter-spacing: 0.08em;
+  }
+  .demo-fact {
+    display: flex;
+  }
+  .online-dot {
+    width: 5px;
+    height: 5px;
+  }
+  .home-section,
+  .flow-section {
+    padding-block: 32px 38px;
+  }
+  .section-row {
+    margin-bottom: 17px;
+    align-items: center;
+  }
+  .section-row h2,
+  .section-title {
+    font-size: 29px;
+  }
+  .section-row h2 sup {
+    font-size: 8px;
+    margin: 3px 0 0 5px;
+    padding: 1px 4px;
+  }
+  .section-row .text-link {
+    font-size: 11px;
+    gap: 4px;
+    padding-top: 17px;
+  }
+  .eyebrow {
+    font-size: 9px;
+    letter-spacing: 0.12em;
+    gap: 7px;
+  }
+  .eyebrow i {
+    width: 13px;
+  }
+  .track-grid,
+  .steps,
+  .about-panel,
+  .booking-layout,
+  .login-layout {
+    grid-template-columns: 1fr;
+  }
+  .track-grid {
+    gap: 15px;
+  }
+  .track-picture {
+    aspect-ratio: 2.16;
+  }
+  .track-plate {
+    left: 12px;
+    top: 12px;
+  }
+  .track-picture .trace {
+    width: 70px;
+  }
+  .track-info {
+    padding: 15px 17px;
+  }
+  .card-code {
+    display: block;
+  }
+  .track-specs {
+    font-size: 11px;
+    gap: 14px;
+  }
+  .steps {
+    gap: 17px;
+    margin-top: 18px;
+  }
+  .step {
+    padding-top: 13px;
+  }
+  .step-index {
+    margin-bottom: 8px;
+  }
+  .step p {
+    margin-top: 6px;
+    max-width: none;
+  }
+  .page-heading {
+    margin-bottom: 23px;
+  }
+  .page-heading p {
+    font-size: 14px;
+  }
+  .inner-page h1 {
+    font-size: clamp(31px, 8vw, 44px);
+    margin-block: 9px;
+  }
+  .plan-row {
+    grid-template-columns: auto 1fr;
+    gap: 10px 13px;
+  }
+  .plan-row > .plan-rate {
+    grid-row: 3;
+    grid-column: 1/3;
+    text-align: left;
+  }
+  .plan-row > p {
+    grid-column: 2;
+    grid-row: 2;
+  }
+  .plan-row > .btn {
+    grid-column: 2;
+    grid-row: 3;
+    align-self: center;
+  }
+  .plan-rate strong {
+    font-size: 22px;
+  }
+  .about-panel > div {
+    padding: 21px;
+  }
+  .about-panel > img {
+    max-height: 200px;
+  }
+  .about-sub {
+    margin-top: 28px;
+  }
+  .booking-layout {
+    gap: 17px;
+  }
+  .form-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 13px 10px;
+  }
+  .field {
+    font-size: 16px;
+    padding: 8px;
+  }
+  .quote-photo {
+    aspect-ratio: 3;
+  }
+  .quote-body {
+    padding: 18px;
+  }
+  .login-visual {
+    display: none;
+  }
+  .login-box {
+    padding: 22px;
+  }
+  .back-link {
+    margin-bottom: 17px;
+  }
+  .footer-grid {
+    gap: 20px 12px;
+    padding-block: 26px;
+  }
+  .credential-card {
+    padding-left: 10px;
+  }
+  .credential-card h3 {
+    font-size: 14px;
+    gap: 5px;
+  }
+  .credential-card h3 svg {
+    width: 15px;
+  }
+  .credential-card dl div {
+    display: block;
+  }
+  .credential-card dl {
+    gap: 7px;
+  }
+  .credential-card dt {
+    font-size: 10px;
+  }
+  .credential-card dd {
+    font-size: 11px;
+  }
+  .credential-card a {
+    font-size: 11px;
+    gap: 4px;
+  }
+  .footer-base {
+    font-size: 10px;
+    padding-block: 14px;
+  }
+  .footer-base i {
+    margin-inline: 2px;
+  }
+  .footer-base a {
+    font-size: 11px;
+  }
+  .dashboard-stats {
+    padding: 16px 0;
+    margin: 20px 0;
+  }
+  .dashboard-stats > div {
+    padding-inline: 11px;
+  }
+  .dashboard-stats span {
+    font-size: 11px;
+  }
+  .dashboard-stats strong {
+    font-size: 29px;
+  }
+  .filter-bar {
+    gap: 5px;
+    margin-bottom: 16px;
+  }
+  .filter-bar button {
+    padding: 7px 9px;
+    font-size: 12px;
+  }
+  .booking-ticket {
+    padding: 16px;
+  }
+  .ticket-main {
+    flex-wrap: wrap;
+    gap: 12px;
+  }
+  .ticket-main img {
+    width: 59px;
+    height: 46px;
+  }
+  .ticket-main h3 {
+    font-size: 20px;
+  }
+  .ticket-times {
+    gap: 3px 8px;
+    font-size: 11px;
+  }
+  .ticket-times svg {
+    width: 12px;
+  }
+  .ticket-amount {
+    text-align: left;
+    flex-basis: 100%;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+  .ticket-amount strong {
+    font-size: 17px;
+  }
+  .status {
+    font-size: 10px;
+  }
+  .identity-chip {
+    font-size: 11px;
+  }
+  .notice,
+  .error-box {
+    font-size: 12px;
+  }
+}
+@media (max-width: 350px) {
+  :root {
+    --edge: 13px;
+  }
+  .wordmark {
+    font-size: 16px;
+  }
+  .nav-actions {
+    gap: 6px;
+  }
+  .nav-row {
+    gap: 8px;
+  }
+  .language-btn svg {
+    display: none;
+  }
+  .hero-actions .btn {
+    padding-inline: 10px;
+    font-size: 11px;
+  }
+  .form-grid {
+    grid-template-columns: 1fr;
+  }
+  .project-fact {
+    gap: 7px;
+  }
+  .section-row .text-link {
+    font-size: 10px;
+  }
+  .section-row h2 {
+    font-size: 26px;
+  }
+  .credential-card h3 {
+    font-size: 12px;
+  }
+  .credential-card a {
+    font-size: 10px;
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation: none !important;
+    transition: none !important;
+    scroll-behavior: auto !important;
+  }
+}

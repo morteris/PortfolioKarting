@@ -1,59 +1,83 @@
-import { useEffect } from 'react'
-import { Routes, Route, useLocation } from 'react-router'
-import Lenis from 'lenis'
-import { LangProvider } from './i18n'
+import { useEffect, useRef } from 'react'
+import { Link, Route, Routes, useLocation } from 'react-router'
+import { useLang } from './i18n'
+import type { Message } from './i18n'
 import { Navbar } from './components/Navbar'
 import { Footer } from './components/Footer'
-import { Preloader, Cursor } from './components/Chrome'
 import Home from './pages/Home'
 import Tracks from './pages/Tracks'
 import Prices from './pages/Prices'
-import Booking from './pages/Booking'
 import About from './pages/About'
+import Booking from './pages/Booking'
+import Login from './pages/Login'
+import Profile from './pages/Profile'
 
-function ScrollToTop() {
-  const { pathname } = useLocation()
-  useEffect(() => {
-    window.scrollTo(0, 0)
-  }, [pathname])
-  return null
+const titles: Record<string, Message> = {
+  '/': 'home',
+  '/tracks': 'tracks',
+  '/prices': 'prices',
+  '/about': 'about',
+  '/booking': 'booking',
+  '/login': 'loginHeading',
+  '/profile': 'account',
+  '/admin': 'adminKicker',
 }
-
 export default function App() {
-  // smooth scroll
+  const { pathname, search } = useLocation()
+  const { lang, t } = useLang()
+  const main = useRef<HTMLElement>(null)
+  const route = pathname + search
+  const last = useRef(route)
+  const title = `${t(titles[pathname] ?? 'notFound')} — ${t('author')} | KART RUSH`
   useEffect(() => {
-    const lenis = new Lenis({ lerp: 0.1, wheelMultiplier: 0.9 })
-    let raf = 0
-    const loop = (t: number) => {
-      lenis.raf(t)
-      raf = requestAnimationFrame(loop)
+    document.documentElement.lang = lang
+    document.title = title
+  }, [lang, title])
+  useEffect(() => {
+    if (last.current !== route) {
+      main.current?.focus({ preventScroll: true })
+      window.scrollTo(0, 0)
+      last.current = route
     }
-    raf = requestAnimationFrame(loop)
-    return () => {
-      cancelAnimationFrame(raf)
-      lenis.destroy()
-    }
-  }, [])
-
+  }, [route])
   return (
-    <LangProvider>
-      <div className="noise min-h-screen bg-[#050505] text-[#f4f4f4]">
-        <Preloader />
-        <Cursor />
-        <Navbar />
-        <ScrollToTop />
-        <main>
-          <Routes>
-            <Route path="/" element={<Home />} />
-            <Route path="/tracks" element={<Tracks />} />
-            <Route path="/prices" element={<Prices />} />
-            <Route path="/booking" element={<Booking />} />
-            <Route path="/about" element={<About />} />
-            <Route path="*" element={<Home />} />
-          </Routes>
-        </main>
-        <Footer />
-      </div>
-    </LangProvider>
+    <>
+      <a
+        className="skip-link"
+        href="#content"
+        onClick={(e) => {
+          e.preventDefault()
+          main.current?.focus()
+        }}
+      >
+        {t('skip')}
+      </a>
+      <Navbar key={pathname} />
+      <main id="content" tabIndex={-1} ref={main}>
+        <Routes>
+          <Route path="/" element={<Home />} />
+          <Route path="/tracks" element={<Tracks />} />
+          <Route path="/prices" element={<Prices />} />
+          <Route path="/about" element={<About />} />
+          <Route path="/booking" element={<Booking key={search} />} />
+          <Route path="/login" element={<Login key={search} />} />
+          <Route path="/profile" element={<Profile />} />
+          <Route path="/admin" element={<Profile adminOnly />} />
+          <Route
+            path="*"
+            element={
+              <section className="shell inner-page">
+                <span className="label">ERROR / 404</span>
+                <h1>{t('notFound')}</h1>
+                <Link className="btn outline" to="/">
+                  {t('back')}
+                </Link>
+              </section>
+            }
+          />
+        </Routes>
+      </main>
+      <Footer />
+    </>
   )
 }

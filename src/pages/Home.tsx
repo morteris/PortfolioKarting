@@ -1,200 +1,142 @@
-import { useEffect, useRef } from 'react'
+import {
+  ArrowRight,
+  ArrowUpRight,
+  Braces,
+  CircleDot,
+  Code2,
+  Crosshair,
+  Flag,
+  GitBranch,
+  Layers3,
+  UsersRound,
+} from 'lucide-react'
 import { Link } from 'react-router'
+import { IMAGES, REPOSITORY, TRACKS } from '../data'
+import { Eyebrow, Trace, TrackCard } from '../components/Design'
 import { useLang } from '../i18n'
-import { Marquee } from '../components/Marquee'
-import { Reveal } from '../components/Reveal'
-import { FlipCard } from '../components/FlipCard'
-import { useCounter, useInView } from '../hooks/anim'
-import { TRACKS, IMAGES } from '../data'
-
-/** Splits text into chars that flip up one by one (after the preloader). */
-function CharReveal({ text, offset = 0, className = '' }: { text: string; offset?: number; className?: string }) {
-  return (
-    <span className={className} aria-label={text}>
-      {text.split('').map((ch, i) => (
-        <span key={i} className="char-mask" aria-hidden>
-          <span style={{ ['--d' as string]: `${2.1 + offset + i * 0.045}s` }}>
-            {ch === ' ' ? ' ' : ch}
-          </span>
-        </span>
-      ))}
-    </span>
-  )
-}
-
-function Stat({ value, suffix, label, start, delay }: { value: number; suffix: string; label: string; start: boolean; delay: number }) {
-  const v = useCounter(value, start)
-  return (
-    <Reveal delay={delay} className="border-l border-[#1f1f1f] pl-5">
-      <div className="stat-num text-4xl md:text-6xl">
-        {v}
-        <span className="text-[#ff0000]">{suffix}</span>
-      </div>
-      <div className="mt-2 font-mono text-[11px] uppercase tracking-[0.22em] text-[#9a9a9a]">{label}</div>
-    </Reveal>
-  )
-}
 
 export default function Home() {
-  const { t } = useLang()
-  const heroImg = useRef<HTMLDivElement>(null)
-
-  // hero parallax
-  useEffect(() => {
-    const el = heroImg.current
-    if (!el) return
-    let raf = 0
-    const on = () => {
-      cancelAnimationFrame(raf)
-      raf = requestAnimationFrame(() => {
-        el.style.transform = `translateY(${window.scrollY * 0.35}px) scale(1.08)`
-      })
-    }
-    window.addEventListener('scroll', on, { passive: true })
-    return () => {
-      window.removeEventListener('scroll', on)
-      cancelAnimationFrame(raf)
-    }
-  }, [])
-
-  const { ref: statsRef, inView: statsIn } = useInView<HTMLDivElement>()
-
+  const { t, lang } = useLang()
   return (
-    <div className="page">
-      {/* ---------------- HERO ---------------- */}
-      <section className="relative flex h-[100svh] min-h-[620px] flex-col justify-end overflow-hidden">
-        <div ref={heroImg} className="absolute inset-0 will-change-transform">
-          <img src={IMAGES.hero} alt="Kart racing" className="h-full w-full object-cover" />
+    <>
+      <section className="hero" aria-labelledby="project-title">
+        <div className="hero-photograph">
+          <img src={IMAGES.hero} fetchPriority="high" alt="" />
         </div>
-        <div className="absolute inset-0 bg-gradient-to-t from-[#050505] via-[#050505]/25 to-[#050505]/40" />
-
-        <div className="relative z-10 mx-auto w-full max-w-[1500px] px-5 pb-8 md:px-10">
-          <Reveal className="mb-4 flex items-center gap-3 font-mono text-[11px] uppercase tracking-[0.3em] text-[#ff0000]" delay={2.2}>
-            <span className="inline-block h-2 w-2 animate-pulse rounded-full bg-[#ff0000]" />
-            {t('hero.kicker')}
-          </Reveal>
-
-          <h1 className="font-display uppercase leading-[0.9]">
-            <span className="block text-[clamp(3.2rem,11vw,9.5rem)]">
-              <CharReveal text={t('hero.title1')} />
-            </span>
-            <span className="block text-[clamp(3.2rem,11vw,9.5rem)] text-[#ff0000]">
-              <CharReveal text={t('hero.title2')} offset={0.25} />
-            </span>
-            <span className="text-outline block text-[clamp(3.2rem,11vw,9.5rem)]">
-              <CharReveal text={t('hero.title3')} offset={0.5} />
-            </span>
-          </h1>
-
-          <div className="mt-8 flex flex-col gap-6 md:flex-row md:items-end md:justify-between">
-            <Reveal delay={2.6} className="max-w-md text-[15px] leading-relaxed text-[#c9c9c9]">
-              {t('hero.sub')}
-            </Reveal>
-            <Reveal delay={2.75} className="flex flex-wrap gap-4">
-              <Link to="/booking" className="btn-rush solid">
-                {t('hero.cta1')} <span className="arrow">→</span>
+        <div className="hero-shade" />
+        <div className="shell hero-inner">
+          <div className="hero-copy">
+            <div className="hero-kicker">
+              <span className="index-tag">{t('project01')}</span>
+              <span className="kicker-divider" />
+              <span>{t('portfolio')}</span>
+            </div>
+            <h1 className="hero-title" id="project-title" lang="en">
+              KART <em>RUSH</em>
+            </h1>
+            <h2 className="hero-lead">{t('heroLead')}</h2>
+            <p className="hero-description">{t('heroBody')}</p>
+            <div className="hero-actions">
+              <Link to="/booking" className="btn primary">
+                {t('book')} <ArrowRight size={18} />
               </Link>
-              <Link to="/tracks" className="btn-rush">
-                {t('hero.cta2')}
-              </Link>
-            </Reveal>
+              <a className="btn ghost" href={REPOSITORY} target="_blank" rel="noreferrer">
+                <Code2 size={18} />
+                {t('repo')} <ArrowUpRight size={14} />
+              </a>
+            </div>
+          </div>
+          <div className="cam-mark" aria-hidden="true">
+            <Crosshair size={14} /> CAM 01 <span>/</span> TRACKSIDE
+          </div>
+          <div className="circuit-tag" aria-hidden="true">
+            <Trace track={TRACKS[0]} />
+            <div>
+              <span className="mono">CIRCUIT / 01</span>
+              <strong>{TRACKS[0].name[lang]}</strong>
+            </div>
           </div>
         </div>
-
-        <Reveal delay={3} className="absolute right-5 top-1/2 z-10 hidden -translate-y-1/2 rotate-90 items-center gap-3 font-mono text-[10px] uppercase tracking-[0.3em] text-[#9a9a9a] md:flex">
-          {t('hero.scroll')}
-          <span className="inline-block h-px w-12 bg-[#ff0000]" />
-        </Reveal>
+        <div className="hero-rule" aria-hidden="true" />
       </section>
-
-      <div className="checker" />
-
-      {/* ---------------- MARQUEE ---------------- */}
-      <Marquee tag={t('marquee.tag')} text={t('marquee1')} red />
-
-      {/* ---------------- STATS ---------------- */}
-      <section ref={statsRef} className="mx-auto grid max-w-[1500px] grid-cols-2 gap-x-5 gap-y-10 px-5 py-16 md:grid-cols-4 md:px-10 md:py-24">
-        <Stat value={3} suffix="" label={t('stats.tracks')} start={statsIn} delay={0} />
-        <Stat value={34} suffix="" label={t('stats.karts')} start={statsIn} delay={0.1} />
-        <Stat value={80} suffix="+" label={t('stats.speed')} start={statsIn} delay={0.2} />
-        <Stat value={4200} suffix="+" label={t('stats.racers')} start={statsIn} delay={0.3} />
-      </section>
-
-      {/* ---------------- FEATURED TRACKS ---------------- */}
-      <section className="mx-auto max-w-[1500px] px-5 pb-20 md:px-10">
-        <div className="mb-10 flex flex-wrap items-end justify-between gap-6">
+      <div className="project-strip">
+        <div className="shell project-facts">
+          <div className="project-fact">
+            <Braces />
+            <div>
+              <span>{t('technology')}</span>
+              <strong>
+                React <i> / </i> TypeScript <i> / </i> Vite
+              </strong>
+            </div>
+          </div>
+          <div className="project-fact">
+            <Layers3 />
+            <div>
+              <span>{t('format')}</span>
+              <strong>{t('webapp')}</strong>
+            </div>
+          </div>
+          <div className="project-fact">
+            <UsersRound />
+            <div>
+              <span>{t('roles')}</span>
+              <strong>{t('bothRoles')}</strong>
+            </div>
+          </div>
+          <div className="project-fact demo-fact">
+            <span className="online-dot" />
+            <div>
+              <span>Runtime</span>
+              <strong>Local demo</strong>
+            </div>
+          </div>
+        </div>
+      </div>
+      <section className="shell home-section">
+        <div className="section-row">
           <div>
-            <Reveal className="font-mono text-[11px] uppercase tracking-[0.3em] text-[#ff0000]">
-              — {t('home.feat.kicker')}
-            </Reveal>
-            <Reveal delay={0.1} as="h2" className="mt-3 font-display text-3xl uppercase md:text-5xl">
-              {t('home.feat.title')}
-            </Reveal>
+            <Eyebrow>01 / {t('catalogKicker')}</Eyebrow>
+            <h2>
+              {t('circuitsHeading')}
+              <sup>03</sup>
+            </h2>
           </div>
-          <Reveal delay={0.2}>
-            <Link to="/tracks" className="btn-rush">
-              {t('home.feat.more')} <span className="arrow">→</span>
-            </Link>
-          </Reveal>
+          <Link className="text-link" to="/tracks">
+            {t('allTracks')}
+            <ArrowRight size={16} />
+          </Link>
         </div>
-        <div className="grid gap-6 md:grid-cols-3">
-          {TRACKS.map((tr, i) => (
-            <Reveal key={tr.id} delay={i * 0.15}>
-              <FlipCard track={tr} index={i} />
-            </Reveal>
+        <div className="track-grid">
+          {TRACKS.map((track, i) => (
+            <TrackCard key={track.id} track={track} index={i} />
           ))}
         </div>
       </section>
-
-      <Marquee tag={t('marquee.tag')} text={t('marquee2')} outline baseSpeed={45} />
-
-      {/* ---------------- HOW IT WORKS ---------------- */}
-      <section className="mx-auto max-w-[1500px] px-5 py-20 md:px-10 md:py-28">
-        <Reveal className="font-mono text-[11px] uppercase tracking-[0.3em] text-[#ff0000]">
-          — {t('home.how.kicker')}
-        </Reveal>
-        <Reveal as="h2" delay={0.1} className="mt-3 font-display text-3xl uppercase md:text-5xl">
-          {t('home.how.title')}
-        </Reveal>
-
-        <div className="mt-12 grid gap-px bg-[#1f1f1f] md:grid-cols-4">
-          {[1, 2, 3, 4].map((n, i) => (
-            <Reveal key={n} delay={i * 0.12} className="group relative bg-[#0a0a0a] p-7 transition-colors duration-300 hover:bg-[#ff0000]">
-              <div className="font-display text-5xl text-[#2a2a2a] transition-colors group-hover:text-white/40">
-                0{n}
+      <section className="flow-section">
+        <div className="shell">
+          <Eyebrow>02 / {t('flowKicker')}</Eyebrow>
+          <h2 className="section-title">{t('flowHeading')}</h2>
+          <div className="steps">
+            {(
+              [
+                { title: 'step1', body: 'step1Text', Icon: CircleDot },
+                { title: 'step2', body: 'step2Text', Icon: Flag },
+                { title: 'step3', body: 'step3Text', Icon: GitBranch },
+              ] as const
+            ).map(({ title, body, Icon }, i) => (
+              <div key={title} className="step">
+                <div className="step-index">
+                  <span>0{i + 1}</span>
+                  <Icon size={18} />
+                </div>
+                <h3>{t(title)}</h3>
+                <p>{t(body)}</p>
               </div>
-              <h3 className="mt-6 font-display text-xl uppercase">
-                {t(`home.how.s${n}.t` as never)}
-              </h3>
-              <p className="mt-3 text-sm leading-relaxed text-[#9a9a9a] transition-colors group-hover:text-white/85">
-                {t(`home.how.s${n}.d` as never)}
-              </p>
-            </Reveal>
-          ))}
+            ))}
+          </div>
         </div>
       </section>
-
-      {/* ---------------- BIG CTA ---------------- */}
-      <section className="relative overflow-hidden border-t border-[#1f1f1f]">
-        <div className="img-zoom mask-slope absolute inset-0 opacity-35">
-          <img src={IMAGES.aerialNight} alt="" className="h-full w-full object-cover" />
-        </div>
-        <div className="absolute inset-0 bg-gradient-to-r from-[#050505] via-[#050505]/60 to-transparent" />
-        <div className="relative z-10 mx-auto max-w-[1500px] px-5 py-24 md:px-10 md:py-36">
-          <Reveal as="h2" className="font-display uppercase leading-[0.9]">
-            <span className="block text-[clamp(3rem,10vw,8rem)]">{t('home.cta.title')}</span>
-            <span className="block text-[clamp(3rem,10vw,8rem)] text-[#ff0000]">{t('home.cta.title2')}</span>
-          </Reveal>
-          <Reveal delay={0.15} className="mt-5 max-w-md text-[15px] text-[#c9c9c9]">
-            {t('home.cta.sub')}
-          </Reveal>
-          <Reveal delay={0.25} className="mt-8">
-            <Link to="/booking" className="btn-rush solid">
-              {t('nav.book')} <span className="arrow">→</span>
-            </Link>
-          </Reveal>
-        </div>
-      </section>
-    </div>
+    </>
   )
 }

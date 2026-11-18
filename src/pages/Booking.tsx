@@ -1,207 +1,241 @@
-import { useMemo, useState } from 'react'
+import { useEffect, useState } from 'react'
+import type { FormEvent } from 'react'
+import { ArrowRight, Check, CircleHelp, Clock3, Flag, Ticket, UserRound } from 'lucide-react'
+import { useNavigate, useSearchParams } from 'react-router'
+import { PLANS, TRACKS, dateText, money, planById, trackById } from '../data'
+import {
+  ACCOUNTS,
+  DemoError,
+  SLOTS,
+  checkDraft,
+  dateInMoscow,
+  maxPilots,
+  priceOf,
+  validDate,
+} from '../domain/booking'
+import type { Draft, ErrorCode } from '../domain/booking'
+import { createBooking, useRecords, useRole } from '../demo/store'
 import { useLang } from '../i18n'
-import { Marquee } from '../components/Marquee'
-import { Reveal } from '../components/Reveal'
-import { TRACKS, IMAGES } from '../data'
+import { PageHead, Trace } from '../components/Design'
 
-const SLOTS = ['10:00', '11:30', '13:00', '14:30', '16:00', '17:30', '19:00', '20:30', '22:00']
-
-export default function Booking() {
+function initialDraft(query: URLSearchParams): Draft {
+  const plan = planById(query.get('plan')).id
+  const date = query.get('date') ?? ''
+  const n = Number(query.get('pilots'))
+  return {
+    track: trackById(query.get('track')).id,
+    plan,
+    date:
+      validDate(date) && date >= dateInMoscow() && date <= dateInMoscow(undefined, 90)
+        ? date
+        : dateInMoscow(undefined, 1),
+    pilots: Number.isInteger(n) && n >= 1 && n <= maxPilots(plan) ? n : 1,
+    slot: SLOTS.find((s) => s === query.get('slot')) ?? '',
+  }
+}
+export default function BookingPage() {
   const { t, lang } = useLang()
-  const [track, setTrack] = useState(TRACKS[0].id)
-  const [date, setDate] = useState('')
-  const [slot, setSlot] = useState('')
-  const [tariff, setTariff] = useState(2)
-  const [pilots, setPilots] = useState(2)
-  const [name, setName] = useState('')
-  const [phone, setPhone] = useState('')
-  const [done, setDone] = useState(false)
-
-  // pseudo-random "occupied" slots per date for realism
-  const occupied = useMemo(() => {
-    const seed = (date || 'x').split('').reduce((a, c) => a + c.charCodeAt(0), 0)
-    return SLOTS.filter((_, i) => (seed + i * 7) % 5 === 0)
-  }, [date])
-
-  const minDate = new Date().toISOString().slice(0, 10)
-  const trackObj = TRACKS.find((tr) => tr.id === track)!
-  const valid = date && slot && name.trim().length > 1 && phone.trim().length > 5
-
+  const role = useRole()
+  const { bookings, corrupt } = useRecords()
+  const [query] = useSearchParams()
+  const navigate = useNavigate()
+  const [draft, setDraft] = useState(() => initialDraft(query))
+  const [busy, setBusy] = useState(false)
+  const [error, setError] = useState<ErrorCode | null>(null)
+  const [now, setNow] = useState(() => Date.now())
+  useEffect(() => {
+    const id = window.setInterval(() => setNow(Date.now()), 30000)
+    return () => window.clearInterval(id)
+  }, [])
+  const track = trackById(draft.track),
+    plan = planById(draft.plan)
+  const slots = SLOTS.map((slot) => ({
+    slot,
+    off: checkDraft({ ...draft, slot }, bookings, now) !== null,
+  }))
+  const selected = slots.find((s) => s.slot === draft.slot && !s.off)?.slot ?? ''
+  const lostSlot = Boolean(draft.slot && !selected)
+  const update = (patch: Partial<Draft>) => {
+    setDraft({ ...draft, ...patch })
+    setError(null)
+  }
+  async function submit(e: FormEvent) {
+    e.preventDefault()
+    if (busy) return
+    const problem = checkDraft(draft, bookings)
+    if (problem || corrupt) {
+      setError(corrupt ? 'corrupt' : problem)
+      return
+    }
+    if (!role) {
+      const params = new URLSearchParams({ ...draft, pilots: String(draft.pilots) })
+      navigate('/login?' + new URLSearchParams({ next: `/booking?${params}` }))
+      return
+    }
+    setBusy(true)
+    setError(null)
+    try {
+      const b = await createBooking(draft)
+      navigate(`/profile?created=${b.id}`, { replace: true })
+    } catch (e) {
+      setError(e instanceof DemoError ? e.code : 'storage')
+      setBusy(false)
+    }
+  }
   return (
-    <div className="page pt-24 md:pt-28">
-      <section className="mx-auto max-w-[1500px] px-5 pb-24 md:px-10">
-        <Reveal className="font-mono text-[11px] uppercase tracking-[0.3em] text-[#ff0000]">
-          — {t('booking.kicker')}
-        </Reveal>
-        <Reveal as="h2" delay={0.05} className="mt-3 font-display text-4xl uppercase md:text-7xl">
-          {t('booking.title')}
-        </Reveal>
-
-        <div className="mt-12 grid gap-10 lg:grid-cols-[1.15fr_1fr]">
-          {/* -------- form / confirmation -------- */}
-          <Reveal delay={0.1}>
-            {done ? (
-              <div className="flex h-full min-h-[420px] flex-col items-center justify-center border border-[#1f1f1f] bg-[#0a0a0a] p-8 text-center">
-                <div className="stamp text-xl md:text-2xl">{t('booking.done')}</div>
-                <div className="mt-8 grid w-full max-w-sm grid-cols-2 gap-px bg-[#1f1f1f] text-left">
-                  {[
-                    [t('booking.track'), t(trackObj.nameKey)],
-                    [t('booking.date'), date],
-                    [t('booking.time'), slot],
-                    [t('booking.pilots'), String(pilots)],
-                  ].map(([k, v]) => (
-                    <div key={k} className="bg-[#0a0a0a] p-4">
-                      <div className="font-mono text-[10px] uppercase tracking-[0.2em] text-[#666]">{k}</div>
-                      <div className="mt-1 font-display text-lg">{v}</div>
-                    </div>
-                  ))}
-                </div>
-                <p className="mt-6 max-w-sm text-sm leading-relaxed text-[#9a9a9a]">{t('booking.done.sub')}</p>
-                <button onClick={() => setDone(false)} className="btn-rush mt-8">
-                  {t('booking.again')}
-                </button>
-              </div>
-            ) : (
-              <form
-                className="border border-[#1f1f1f] bg-[#0a0a0a] p-6 md:p-8"
-                onSubmit={(e) => {
-                  e.preventDefault()
-                  if (valid) setDone(true)
+    <section className="shell inner-page">
+      <PageHead kicker={t('reserveKicker')} title={t('reserveHeading')}>
+        {t('reserveText')}
+      </PageHead>
+      <div className="booking-layout">
+        <form className="panel booking-form" onSubmit={submit}>
+          <div className="panel-head">
+            <span className="label">GRID / 01</span>
+            <h2>{t('params')}</h2>
+          </div>
+          <div className="form-grid">
+            <label className="field-label">
+              {t('track')}
+              <select
+                className="field"
+                value={draft.track}
+                onChange={(e) => update({ track: trackById(e.target.value).id, slot: '' })}
+              >
+                {TRACKS.map((tr) => (
+                  <option key={tr.id} value={tr.id}>
+                    {tr.name[lang]} · {tr.length} {t('meters')}
+                  </option>
+                ))}
+              </select>
+            </label>
+            <label className="field-label">
+              {t('plan')}
+              <select
+                className="field"
+                value={draft.plan}
+                onChange={(e) => {
+                  const id = planById(e.target.value).id
+                  update({ plan: id, pilots: Math.min(draft.pilots, maxPilots(id)), slot: '' })
                 }}
               >
-                <div className="grid gap-5 md:grid-cols-2">
-                  <label className="block">
-                    <span className="mb-2 block font-mono text-[10px] uppercase tracking-[0.22em] text-[#9a9a9a]">
-                      {t('booking.track')}
-                    </span>
-                    <select className="field" value={track} onChange={(e) => setTrack(e.target.value)}>
-                      {TRACKS.map((tr) => (
-                        <option key={tr.id} value={tr.id}>
-                          {t(tr.nameKey)} — {tr.length}
-                        </option>
-                      ))}
-                    </select>
-                  </label>
-                  <label className="block">
-                    <span className="mb-2 block font-mono text-[10px] uppercase tracking-[0.22em] text-[#9a9a9a]">
-                      {t('booking.date')}
-                    </span>
-                    <input
-                      type="date"
-                      className="field [color-scheme:dark]"
-                      min={minDate}
-                      value={date}
-                      onChange={(e) => {
-                        setDate(e.target.value)
-                        setSlot('')
-                      }}
-                    />
-                  </label>
-                </div>
-
-                <div className="mt-6">
-                  <span className="mb-2 block font-mono text-[10px] uppercase tracking-[0.22em] text-[#9a9a9a]">
-                    {t('booking.time')}
-                  </span>
-                  <div className="grid grid-cols-3 gap-2 sm:grid-cols-5">
-                    {SLOTS.map((s) => {
-                      const off = date ? occupied.includes(s) : false
-                      return (
-                        <button
-                          type="button"
-                          key={s}
-                          onClick={() => setSlot(s)}
-                          className={`slot ${slot === s ? 'on' : ''} ${off ? 'off' : ''}`}
-                        >
-                          {s}
-                        </button>
-                      )
-                    })}
-                  </div>
-                </div>
-
-                <div className="mt-6 grid gap-5 md:grid-cols-2">
-                  <label className="block">
-                    <span className="mb-2 block font-mono text-[10px] uppercase tracking-[0.22em] text-[#9a9a9a]">
-                      {t('booking.tariff')}
-                    </span>
-                    <select className="field" value={tariff} onChange={(e) => setTariff(+e.target.value)}>
-                      {[1, 2, 3, 4].map((n) => (
-                        <option key={n} value={n}>
-                          {t(`prices.p${n}.name` as never)}
-                        </option>
-                      ))}
-                    </select>
-                  </label>
-                  <label className="block">
-                    <span className="mb-2 block font-mono text-[10px] uppercase tracking-[0.22em] text-[#9a9a9a]">
-                      {t('booking.pilots')}: {pilots}
-                    </span>
-                    <input
-                      type="range"
-                      min={1}
-                      max={20}
-                      value={pilots}
-                      onChange={(e) => setPilots(+e.target.value)}
-                      className="mt-4 w-full accent-[#ff0000]"
-                    />
-                  </label>
-                </div>
-
-                <div className="mt-6 grid gap-5 md:grid-cols-2">
-                  <label className="block">
-                    <span className="mb-2 block font-mono text-[10px] uppercase tracking-[0.22em] text-[#9a9a9a]">
-                      {t('booking.name')}
-                    </span>
-                    <input
-                      className="field"
-                      placeholder={t('booking.ph.name')}
-                      value={name}
-                      onChange={(e) => setName(e.target.value)}
-                    />
-                  </label>
-                  <label className="block">
-                    <span className="mb-2 block font-mono text-[10px] uppercase tracking-[0.22em] text-[#9a9a9a]">
-                      {t('booking.phone')}
-                    </span>
-                    <input
-                      className="field"
-                      placeholder={t('booking.ph.phone')}
-                      value={phone}
-                      onChange={(e) => setPhone(e.target.value)}
-                    />
-                  </label>
-                </div>
-
+                {PLANS.map((p) => (
+                  <option key={p.id} value={p.id}>
+                    {p.name[lang]} · {p.minutes} {t('minutes')}
+                  </option>
+                ))}
+              </select>
+            </label>
+            <label className="field-label">
+              {t('date')}
+              <input
+                className="field"
+                type="date"
+                required
+                min={dateInMoscow(now)}
+                max={dateInMoscow(now, 90)}
+                value={draft.date}
+                onChange={(e) => update({ date: e.target.value, slot: '' })}
+              />
+            </label>
+            <label className="field-label">
+              {t('pilots')}
+              <select
+                className="field"
+                value={draft.pilots}
+                onChange={(e) => update({ pilots: Number(e.target.value) })}
+              >
+                {Array.from({ length: maxPilots(draft.plan) }, (_, i) => (
+                  <option key={i} value={i + 1}>
+                    {i + 1}
+                  </option>
+                ))}
+              </select>
+            </label>
+          </div>
+          <fieldset className="slot-field">
+            <legend>
+              {t('time')} <small>UTC+3</small>
+            </legend>
+            <div className="slot-grid">
+              {slots.map(({ slot, off }) => (
                 <button
-                  type="submit"
-                  disabled={!valid}
-                  className={`btn-rush solid mt-8 w-full justify-center ${!valid ? 'pointer-events-none opacity-35' : ''}`}
+                  key={slot}
+                  type="button"
+                  className="slot"
+                  disabled={off}
+                  aria-pressed={selected === slot}
+                  onClick={() => update({ slot })}
                 >
-                  {t('booking.submit')} <span className="arrow">→</span>
+                  {slot}
+                  {selected === slot && <Check size={12} />}
                 </button>
-                <p className="mt-4 font-mono text-[10px] uppercase tracking-[0.15em] text-[#666]">
-                  {t('booking.demo')}
-                </p>
-              </form>
-            )}
-          </Reveal>
-
-          {/* -------- side visual -------- */}
-          <Reveal delay={0.2} className="relative min-h-[320px]">
-            <div className="img-zoom sticky top-28 border border-[#1f1f1f]">
-              <img src={IMAGES.kart} alt="Racing kart" className="w-full object-cover" />
-              <div className="absolute inset-x-0 bottom-0 flex items-center justify-between bg-black/70 p-4 backdrop-blur-sm">
-                <span className="font-mono text-[10px] uppercase tracking-[0.2em] text-[#9a9a9a]">
-                  Sodi RT8 · 270 cm³
-                </span>
-                <span className="font-display text-xl text-[#ff0000]">80 км/ч</span>
-              </div>
+              ))}
             </div>
-          </Reveal>
-        </div>
-      </section>
-      <Marquee tag={t('marquee.tag')} text={lang === 'ru' ? 'До встречи на трассе' : 'See you on track'} red />
-    </div>
+            <p className="helper">
+              <Clock3 size={13} />
+              {t(slots.every((s) => s.off) ? 'noSlots' : 'slotHint')}
+            </p>
+          </fieldset>
+          {role && (
+            <p className="helper">
+              <UserRound size={14} /> {t('loggedAs')} {ACCOUNTS[role].email}
+            </p>
+          )}
+          {(error || corrupt || lostSlot) && (
+            <p className="error-box" role="alert">
+              {t(error ?? (corrupt ? 'corrupt' : (checkDraft(draft, bookings, now) ?? 'occupied')))}
+            </p>
+          )}
+          <div className="form-bottom">
+            <button
+              type="submit"
+              disabled={busy || !selected || corrupt}
+              className="btn primary wide"
+            >
+              {t(busy ? 'busy' : role ? 'create' : 'guestBook')}
+              <ArrowRight size={17} />
+            </button>
+            {!selected && <p className="helper center">{t('pickTime')}</p>}
+          </div>
+        </form>
+        <aside className="quote panel">
+          <div className="quote-photo">
+            <img src={track.img} alt="" />
+            <span className="visual-tag mono">
+              <Ticket size={15} /> SESSION / PASS
+            </span>
+            <Trace track={track} />
+          </div>
+          <div className="quote-body">
+            <span className="label">
+              <Flag size={14} /> {t('quote')}
+            </span>
+            <h2>{track.name[lang]}</h2>
+            <dl className="summary-list">
+              {[
+                [t('plan'), plan.name[lang]],
+                [t('duration'), `${plan.minutes} ${t('minutes')}`],
+                [t('date'), validDate(draft.date) ? dateText(draft.date, lang) : '—'],
+                [t('time'), selected ? `${selected} · UTC+3` : '—'],
+                [t('pilots'), draft.pilots],
+              ].map(([l, v]) => (
+                <div key={l}>
+                  <dt>{l}</dt>
+                  <dd>{v}</dd>
+                </div>
+              ))}
+            </dl>
+            <div className="quote-total">
+              <span>{t('estimate')}</span>
+              <strong>{money(priceOf(draft), lang)}</strong>
+            </div>
+            <p className="helper">
+              <CircleHelp size={14} />
+              {t('noPayment')}
+            </p>
+          </div>
+        </aside>
+      </div>
+    </section>
   )
 }
