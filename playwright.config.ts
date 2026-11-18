@@ -3,7 +3,7 @@ import { defineConfig } from '@playwright/test'
 export default defineConfig({
   testDir: './tests',
   fullyParallel: true,
-  workers: 3,
+  workers: 2,
   reporter: 'list',
   use: {
     baseURL: 'http://127.0.0.1:4173',
@@ -15,7 +15,7 @@ export default defineConfig({
     { name: 'rules', testMatch: '**/booking.rules.spec.ts' },
     {
       name: 'chromium',
-      testMatch: '**/app.e2e.spec.ts',
+      testMatch: '**/*.e2e.spec.ts',
       use: { browserName: 'chromium', viewport: { width: 1360, height: 900 } },
     },
   ],
