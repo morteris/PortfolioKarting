@@ -1,73 +1,74 @@
-# React + TypeScript + Vite
+# Питернев И. / KART RUSH
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+Портфолио фронтенд-разработчика с интерактивной демонстрацией бронирования картинга. Основа — [morteris/PortfolioKarting](https://github.com/morteris/PortfolioKarting): сохранены три трассы, четыре тарифа, фотографии, локальные шрифты и гоночное оформление. Главная представляет автора и даёт ссылку на исходный проект.
 
-Currently, two official plugins are available:
+## Запуск
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Babel](https://babeljs.io/) (or [oxc](https://oxc.rs) when used in [rolldown-vite](https://vite.dev/guide/rolldown)) for Fast Refresh
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/) for Fast Refresh
+Нужны **Node.js 22.12+** (также поддерживается 20.19+) и npm. В каталоге с `package.json`:
 
-## React Compiler
-
-The React Compiler is not enabled on this template because of its impact on dev & build performances. To add it, see [this documentation](https://react.dev/learn/react-compiler/installation).
-
-## Expanding the ESLint configuration
-
-If you are developing a production application, we recommend updating the configuration to enable type-aware lint rules:
-
-```js
-export default defineConfig([
-  globalIgnores(['dist']),
-  {
-    files: ['**/*.{ts,tsx}'],
-    extends: [
-      // Other configs...
-
-      // Remove tseslint.configs.recommended and replace with this
-      tseslint.configs.recommendedTypeChecked,
-      // Alternatively, use this for stricter rules
-      tseslint.configs.strictTypeChecked,
-      // Optionally, add this for stylistic rules
-      tseslint.configs.stylisticTypeChecked,
-
-      // Other configs...
-    ],
-    languageOptions: {
-      parserOptions: {
-        project: ['./tsconfig.node.json', './tsconfig.app.json'],
-        tsconfigRootDir: import.meta.dirname,
-      },
-      // other options...
-    },
-  },
-])
+```sh
+npm ci
+npm run dev
 ```
 
-You can also install [eslint-plugin-react-x](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-x) and [eslint-plugin-react-dom](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-dom) for React-specific lint rules:
+Откройте адрес из терминала (по умолчанию `http://localhost:3000`). Для проверки собранной версии: `npm run build`, затем `npm run preview`.
 
-```js
-// eslint.config.js
-import reactX from 'eslint-plugin-react-x'
-import reactDom from 'eslint-plugin-react-dom'
+**В архиве уже есть готовый `dist/`.** Его можно разместить на статическом хостинге или открыть через локальный HTTP-сервер без сборки: `python -m http.server 8080 --directory dist`, затем `http://localhost:8080`. Двойной клик по `index.html` через `file://` не подходит для ES-модулей.
 
-export default defineConfig([
-  globalIgnores(['dist']),
-  {
-    files: ['**/*.{ts,tsx}'],
-    extends: [
-      // Other configs...
-      // Enable lint rules for React
-      reactX.configs['recommended-typescript'],
-      // Enable lint rules for React DOM
-      reactDom.configs.recommended,
-    ],
-    languageOptions: {
-      parserOptions: {
-        project: ['./tsconfig.node.json', './tsconfig.app.json'],
-        tsconfigRootDir: import.meta.dirname,
-      },
-      // other options...
-    },
-  },
-])
+## Проверка демо за две минуты
+
+| Роль | Email | Пароль |
+| --- | --- | --- |
+| Тестовый пилот | `pilot@kart.test` | `Pilot2026` |
+| Администратор | `admin@kart.test` | `Admin2026` |
+
+1. На главной нажмите **«Войти» → «Пилот» → «Войти в кабинет»**. Кнопка роли подставляет публичные демоданные; их также можно ввести вручную. Обе пары есть внизу каждой страницы.
+2. В кабинете выберите **«Новая бронь»**. Укажите трассу, тариф, дату, число пилотов и свободное время. Нажмите **«Оформить демобронь»**. Созданная запись сразу появится в разделе **«Мои брони»** со статусом **«На рассмотрении»**. Обновите страницу — запись останется.
+3. Выйдите из кабинета и войдите под администратором. В **«Управлении заявками»** подтвердите или отмените бронь. При повторном входе пилот увидит новый статус. Для одновременной проверки оставьте кабинет пилота открытым и войдите под администратором **в другой вкладке того же браузера и с того же адреса сайта**: статусы обновляются без перезагрузки.
+4. Отмена требует подтверждения и освобождает время. Пилот может отменить собственный будущий заезд, но не может подтвердить его или управлять чужими заявками.
+
+Можно и не входить заранее: **«Выбрать заезд» → параметры → «Войти и продолжить»**. После входа выбор восстановится; заявка создаётся только при явном подтверждении формы.
+
+## Правила записи и границы демо
+
+- Запись на 90 дней вперёд, по московскому времени (UTC+3), с 10:00 до 23:00. Нельзя записаться в прошлое или выбрать сессию, которая закончится после закрытия.
+- Две активные заявки не могут пересекаться **на одной трассе**. Учитывается длительность тарифа, а не только одинаковое время старта. Отмена не удаляет историю.
+- У первых трёх тарифов цена указана за пилота, у корпоратива — за всё мероприятие. Никаких платежей не проводится.
+- `localStorage` хранит брони и язык, `sessionStorage` — только идентификатор активной демороли для вкладки. Пароль посетителя не сохраняется. При выходе история броней не удаляется.
+- Это **не серверная авторизация**. Аккаунты намеренно публичны; реальных телефонов или личных данных проект не запрашивает. У разных устройств, браузеров и доменов независимые данные. Сервер, почта и платёжный шлюз не используются.
+- Для чистой демонстрации используйте приватное окно. Не нужно удалять данные других сайтов. Повреждённые записи не перезаписываются молча.
+
+## Технологии и структура
+
+React 19, TypeScript, Vite, React Router (`HashRouter`), Tailwind CSS и локальные стили. Интерфейс доступен на русском и английском. Нативная прокрутка, обычный курсор, без блокирующей заставки, параллакса и бесконечных анимаций. Короткие переходы отключаются при `prefers-reduced-motion`.
+
+- `src/data.ts` — каталог, тарифы, локальные изображения, ссылка на репозиторий.
+- `src/domain/booking.ts` — модель, расчёт стоимости, проверка интервалов, допустимые переходы статуса.
+- `src/demo/store.ts` — демовход и операции с данными. При записи повторно проверяются полномочия, состояние и свободный интервал. Web Locks сериализует изменения между вкладками в поддерживающих браузерах; в остальных действует синхронная повторная проверка без межвкладочной блокировки.
+- `src/pages/` — портфолио, каталог, тарифы, описание проекта, вход, бронирование и кабинет.
+- `src/components/` — навигация, карточки трасс и заявок, блок демодоступа.
+- `src/i18n/`, `src/styles/` — тексты двух языков и оформление.
+- `tests/` — проверки правил и сквозные браузерные сценарии.
+
+## Проверки
+
+```sh
+npm run lint
+npm run build
+npx playwright install chromium --with-deps
+npm test
 ```
+
+`npm run test:unit` — только правила, без запуска браузера; `npm run test:e2e` — сценарии Chromium. Playwright собирает приложение и использует отдельный локальный сервер на порту `4173`. Тестовые профили изолированы от данных посетителей.
+
+## Перенос в репозиторий и публикация
+
+Для локального просмотра распакуйте архив в **новую папку**. При переносе в существующую ветку сохраните текущие изменения в отдельном коммите или ветке. Обновляйте **папку `src/` целиком**, а не поверх старых файлов: у прежней версии были другой модуль `i18n.tsx` и анимационные компоненты. Перенесите также `public/`, `tests/`, конфигурацию и оба npm-файла. Папки `.git/` и `node_modules/` переносить не нужно. Если используете приложенный отдельно `PortfolioKarting.patch`, он применяет исходные изменения, включая удаления: `git apply --check /путь/PortfolioKarting.patch`, затем `git apply /путь/PortfolioKarting.patch` из корня чистой исходной версии.
+
+Для **GitHub Pages** в репозитории предусмотрен *ручной* workflow `.github/workflows/pages.yml`:
+
+1. Добавьте изменения в свой репозиторий и перенесите workflow в ветку по умолчанию.
+2. В **Settings → Pages → Source** выберите **GitHub Actions**.
+3. В **Actions → Publish portfolio to GitHub Pages → Run workflow** запустите публикацию нужной ветки. Ссылка на сайт появится в результате шага `deploy`.
+
+Сам по себе архив, патч или простой push **не запускает публикацию**. Развёртывание не требует вставлять токены в код. На другом статическом хостинге достаточно загрузить **содержимое** `dist/`. Относительная база и hash-маршруты поддерживают размещение в подпапке `/PortfolioKarting/` без серверных правил перезаписи.

@@ -6,7 +6,7 @@ import tseslint from 'typescript-eslint'
 import { defineConfig, globalIgnores } from 'eslint/config'
 
 export default defineConfig([
-  globalIgnores(['dist']),
+  globalIgnores(['dist', 'test-results', 'playwright-report']),
   {
     files: ['**/*.{ts,tsx}'],
     extends: [
@@ -15,9 +15,27 @@ export default defineConfig([
       reactHooks.configs.flat.recommended,
       reactRefresh.configs.vite,
     ],
-    languageOptions: {
-      ecmaVersion: 2020,
-      globals: globals.browser,
+    languageOptions: { ecmaVersion: 2022, globals: globals.browser },
+  },
+  {
+    // shadcn primitives intentionally co-export their style variants and scoped hooks.
+    files: ['src/components/ui/*.tsx'],
+    rules: {
+      'react-refresh/only-export-components': [
+        'error',
+        {
+          allowConstantExport: true,
+          allowExportNames: [
+            'badgeVariants',
+            'buttonGroupVariants',
+            'buttonVariants',
+            'useFormField',
+            'navigationMenuTriggerStyle',
+            'useSidebar',
+            'toggleVariants',
+          ],
+        },
+      ],
     },
   },
 ])
